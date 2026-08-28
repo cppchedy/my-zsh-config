@@ -7,6 +7,19 @@ set -euo pipefail
 # =============================================================================
 
 REPO_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+STATE_DIR="$HOME/.local/state/dotfiles"
+
+BASE_PACKAGES=(
+    zsh
+    tmux
+    git
+    fzf
+    zoxide
+    zsh-autosuggestions
+    zsh-syntax-highlighting
+)
+
+mkdir -p "$STATE_DIR"
 
 echo "==> Provisioning from: $REPO_ROOT"
 
@@ -14,18 +27,24 @@ echo "==> Provisioning from: $REPO_ROOT"
 # Packages
 # -----------------------------------------------------------------------------
 
-echo "==> Installing packages..."
+echo "==> Installing base packages..."
 
 sudo apt-get update
 
-sudo apt-get install -y \
-    zsh \
-    tmux \
-    git \
-    fzf \
-    zoxide \
-    zsh-autosuggestions \
-    zsh-syntax-highlighting
+INSTALLED_BY_DOTFILES="$STATE_DIR/base-packages"
+touch "$INSTALLED_BY_DOTFILES"
+
+for package in "${BASE_PACKAGES[@]}"; do
+    if ! dpkg-query -W -f='${Status}' "$package" 2>/dev/null |
+        grep -q "install ok installed"; then
+
+        if ! grep -qx "$package" "$INSTALLED_BY_DOTFILES"; then
+            echo "$package" >> "$INSTALLED_BY_DOTFILES"
+        fi
+    fi
+done
+
+sudo apt-get install -y "${BASE_PACKAGES[@]}"
 
 # -----------------------------------------------------------------------------
 # Zsh completions
