@@ -18,6 +18,7 @@ DEV_PACKAGES=(
     clang-format
     clang-tidy
     gdb
+    pipx
 )
 
 mkdir -p "$STATE_DIR"
@@ -40,6 +41,22 @@ for package in "${DEV_PACKAGES[@]}"; do
 done
 
 sudo apt-get install -y "${DEV_PACKAGES[@]}"
+
+# -----------------------------------------------------------------------------
+# Conan
+# -----------------------------------------------------------------------------
+
+CONAN_STATE="$STATE_DIR/conan"
+
+if ! command -v conan >/dev/null 2>&1; then
+    echo "==> Installing Conan..."
+    pipx install conan
+    touch "$CONAN_STATE"
+else
+    echo "==> Conan is already installed"
+fi
+
+pipx ensurepath
 
 echo
 echo "==> C++ development tools installed."
