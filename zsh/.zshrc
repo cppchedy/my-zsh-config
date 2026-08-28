@@ -157,3 +157,6 @@ PROMPT='%F{cyan}%~%f %F{green}${vcs_info_msg_0_}%f %F{yellow}❯%f '
 
 # CMake / C++ workflow
 # source "$DOTFILES_DIR/zsh/config/cmake.zsh"
+
+# TMUX at startup
+# source "$DOTFILES_DIR/zsh/config/tmux.zsh"
