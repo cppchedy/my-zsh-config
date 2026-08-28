@@ -128,28 +128,37 @@ eval "$(zoxide init zsh)"
 # Git prompt
 # -----------------------------------------------------------------------------
 
-autoload -Uz vcs_info
+git_prompt() {
+    local branch ahead behind staged unstaged
 
-zstyle ':vcs_info:git:*' enable git
-zstyle ':vcs_info:git:*' check-for-changes true
+    branch=$(git branch --show-current 2>/dev/null) || return
+    [[ -z "$branch" ]] && return
 
-zstyle ':vcs_info:git:*' stagedstr '+'
-zstyle ':vcs_info:git:*' unstagedstr '*'
+    staged=''
+    unstaged=''
 
-zstyle ':vcs_info:git:*' formats '[%b%c%u]'
-zstyle ':vcs_info:git:*' actionformats '[%b|%a%c%u]'
+    git diff --cached --quiet 2>/dev/null || staged='+'
+    git diff --quiet 2>/dev/null || unstaged='*'
 
-# Show ahead/behind information
-zstyle ':vcs_info:git:*' get-revision true
-zstyle ':vcs_info:git:*' set-message true
+    ahead=0
+    behind=0
 
-precmd() {
-    vcs_info
+    if git rev-parse --abbrev-ref '@{upstream}' >/dev/null 2>&1; then
+        read ahead behind <<< \
+            "$(git rev-list --left-right --count HEAD...@{upstream})"
+    fi
+
+    print -n "[$branch${staged}${unstaged}"
+
+    (( ahead > 0 )) && print -n " ↑$ahead"
+    (( behind > 0 )) && print -n " ↓$behind"
+
+    print -n "]"
 }
 
 setopt PROMPT_SUBST
 
-PROMPT='%F{cyan}%~%f %F{green}${vcs_info_msg_0_}%f %F{yellow}❯%f '
+PROMPT='%F{cyan}%~%f %F{green}$(git_prompt)%f %F{yellow}❯%f '
 
 # -----------------------------------------------------------------------------
 # Optional modules
