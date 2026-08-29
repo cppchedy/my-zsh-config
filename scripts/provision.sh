@@ -85,17 +85,25 @@ fi
 # -----------------------------------------------------------------------------
 
 ZSH_PATH="$(command -v zsh)"
+SET_DEFAULT_SHELL=true
 
-if [[ "$SHELL" != "$ZSH_PATH" ]]; then
-    echo "==> Setting Zsh as default shell..."
+if [[ "${1:-}" == "--no-default-shell" ]]; then
+    SET_DEFAULT_SHELL=false
+fi
 
-    if ! grep -qxF "$ZSH_PATH" /etc/shells; then
-        echo "$ZSH_PATH" | sudo tee -a /etc/shells >/dev/null
+if [[ "$SET_DEFAULT_SHELL" == true ]]; then
+
+    if [[ "$SHELL" != "$ZSH_PATH" ]]; then
+        echo "==> Setting Zsh as default shell..."
+
+        if ! grep -qxF "$ZSH_PATH" /etc/shells; then
+            echo "$ZSH_PATH" | sudo tee -a /etc/shells >/dev/null
+        fi
+
+        chsh -s "$ZSH_PATH"
+    else
+        echo "==> Zsh is already the default shell"
     fi
-
-    chsh -s "$ZSH_PATH"
-else
-    echo "==> Zsh is already the default shell"
 fi
 
 # -----------------------------------------------------------------------------
