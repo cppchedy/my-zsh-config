@@ -25,7 +25,13 @@ mkdir -p "$STATE_DIR"
 
 echo "==> Installing C++ development tools..."
 
-sudo apt-get update
+if (( EUID == 0 )); then
+    APT=(apt-get)
+else
+    APT=(sudo apt-get)
+fi
+
+"${APT[@]}" apt-get update
 
 INSTALLED_BY_DOTFILES="$STATE_DIR/dev-packages"
 touch "$INSTALLED_BY_DOTFILES"
@@ -40,7 +46,7 @@ for package in "${DEV_PACKAGES[@]}"; do
     fi
 done
 
-sudo apt-get install -y "${DEV_PACKAGES[@]}"
+"${APT[@]}" apt-get install -y "${DEV_PACKAGES[@]}"
 
 # -----------------------------------------------------------------------------
 # Conan

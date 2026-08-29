@@ -29,7 +29,13 @@ echo "==> Provisioning from: $REPO_ROOT"
 
 echo "==> Installing base packages..."
 
-sudo apt-get update
+if (( EUID == 0 )); then
+    APT=(apt-get)
+else
+    APT=(sudo apt-get)
+fi
+
+"${APT[@]}" apt-get update
 
 INSTALLED_BY_DOTFILES="$STATE_DIR/base-packages"
 touch "$INSTALLED_BY_DOTFILES"
@@ -44,7 +50,7 @@ for package in "${BASE_PACKAGES[@]}"; do
     fi
 done
 
-sudo apt-get install -y "${BASE_PACKAGES[@]}"
+"${APT[@]}" apt-get install -y "${BASE_PACKAGES[@]}"
 
 # -----------------------------------------------------------------------------
 # Zsh completions
