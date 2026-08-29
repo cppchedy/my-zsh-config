@@ -30,7 +30,7 @@ else
     APT=(sudo apt-get)
 fi
 
-"${APT[@]}" apt-get update
+"${APT[@]}" update
 
 INSTALLED_BY_DOTFILES="$STATE_DIR/dev-packages"
 touch "$INSTALLED_BY_DOTFILES"
@@ -45,7 +45,7 @@ for package in "${DEV_PACKAGES[@]}"; do
     fi
 done
 
-"${APT[@]}" apt-get install -y "${DEV_PACKAGES[@]}"
+"${APT[@]}" install -y "${DEV_PACKAGES[@]}"
 
 echo
 echo "==> C++ development tools installed."

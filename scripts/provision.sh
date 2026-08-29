@@ -35,7 +35,7 @@ else
     APT=(sudo apt-get)
 fi
 
-"${APT[@]}" apt-get update
+"${APT[@]}" update
 
 INSTALLED_BY_DOTFILES="$STATE_DIR/base-packages"
 touch "$INSTALLED_BY_DOTFILES"
@@ -50,7 +50,7 @@ for package in "${BASE_PACKAGES[@]}"; do
     fi
 done
 
-"${APT[@]}" apt-get install -y "${BASE_PACKAGES[@]}"
+"${APT[@]}" install -y "${BASE_PACKAGES[@]}"
 
 # -----------------------------------------------------------------------------
 # Zsh completions
